@@ -321,79 +321,8 @@ func findPunctuationIndex(word string) int {
 
 func punctuations(table []string) []string {
 	var result []string
-	//var corrWord string
 	for i := 0; i < len(table); i++ {
-		/* // if  i have just one punct in  table[i]
-		if i > 0 && (table[i] == "," || table[i] == "." || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";") {
-			table[i-1] = table[i-1] + table[i]
-			table[i] = ""
-
-
-
-
-
-
-
-			// if it starts with the punc
-
-			//!   one by one 
-		}else if i > 0 && (strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";")) {
-			count := 0
-			for j := 0; j < len(table[i]); j++ {
-				if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
-					count++
-				}
-			}
-			if count == 1 {
-				table[i-1] = table[i-1] + string(table[i][0])
-				table[i] = table[i][1:]
-			} else {
-				table[i-1] = table[i-1] + string(table[i][0:count])
-				table[i] = table[i][count:]
-			}
-		}else if i == 0  && (strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";")) {
-word:=""
-
-			count := 0
-			for j := 0; j < len(table[i]); j++ {
-				if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
-					count++
-				}
-			}
-			 for j := 0; j < len(table[i]); j++ {
-				word+=string(table[i][j]) 
-				if j == count-1 {
-					word+=" "
-				}
-			 }
-			 table[i] = word
-
-		}else if strings.Contains(table[i][1:len(table[i])-2],",") {
-			fmt.Println("nkd")
-word:=""
-			count := 0
-			for j := 0; j < len(table[i]); j++ {
-				if table[i][j] == ',' {
-					count++
-				}
-			}
-			if count == 1 {
-				index := findPunctuationIndex(table[i])
-
-				for j := 0; j < len(table[i]); j++ {
-					word+=string(table[i][j]) 
-					if j == index {
-						word+=" "
-					}
-				 }
-				 table[i] =string(table[i][0]) +  word + string(table[i][len(table[i])-1])
-	
-			}
-			
-		}
-
-
- */
+		
  if  table[i] == "." || table[i] == "," || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";"{
 	if i > 0 {
 		for j := 0; j < i; j++ {
