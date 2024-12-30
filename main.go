@@ -17,11 +17,22 @@ func AddToFile(data []byte, name string) {
 	fmt.Println("success")
 }
 
+func ignoreempty(i int, counter int, table []string) int {
+	for l := i - 1; l >= 0; l-- {
+		if table[l] == "" {
+			counter++
+		} else {
+			break
+		}
+	}
+	return counter
+}
+
 // function to handle the ) in the exampels of (up, 2)
 func MyAtoi(word string) int {
 	correct := ""
 
-	if word[len(word)-1] >= ')'    && word[len(word)-2] >= '1' && word[len(word)-2] <= '9' {
+	if word[len(word)-1] >= ')' && word[len(word)-2] >= '0' && word[len(word)-2] <= '9' {
 		for i := 0; i < len(word)-1; i++ {
 			correct += string(word[i])
 		}
@@ -78,11 +89,16 @@ func ProcessAll() {
 	*/
 
 	table := addToTable()
+	table = withNumber(table)
+	table = BinaryToDecimal(table)
+	table = HexadecimalToDecimal(table)
 	table = Capitalized(table)
 	table = Lower(table)
 	table = Upper(table)
-	table = withNumber(table)
-
+	table = punctuations(table)
+	table = Avowel(table)
+	table = marks(table)
+	fmt.Println(MarksWords(table))
 	text := TableToString(table)
 	data := []byte(text)
 	AddToFile(data, os.Args[2])
@@ -150,9 +166,14 @@ func Upper(table []string) []string {
 	for i := 0; i < len(table); i++ {
 		if i > 0 {
 			if table[i] == "(up)" {
-				if table[i-1] != "" {
-					table[i-1] = strings.ToUpper(table[i-1])
-				}
+				counter := 0
+
+				counter = ignoreempty(i, counter, table)
+				fmt.Println(counter, " its up counter")
+				fmt.Println(i, " its up i")
+
+				table[i-1] = strings.ToUpper(table[i-1-counter])
+
 			}
 		}
 	}
@@ -197,26 +218,20 @@ func withNumber(table []string) []string {
 	//	var result []string
 
 	count := 0
-	for i := 0; i < len(table)-1; i++ {
+	for i := 0; i < len(table); i++ {
 		if i > 0 {
 			count++
 			num1 := 0
-			if string(table[i]) == "(low,"  &&  strings.HasSuffix(table[i+1],")"){
+			if string(table[i]) == "(low," && strings.HasSuffix(table[i+1], ")") {
 
 				num1 = MyAtoi(table[i+1])
-				if count-1 < num1 {
-					num1 = count - 1
+				if count < num1 {
+					num1 = count
 				}
 				counter := 0
-
-				for l := i - 1; l >= 0; l-- {
-					if table[l] == "" {
-						counter++
-					} else {
-						break
-					}
-				}
-				for j := 1; j <= num1; j++ {
+				counter = ignoreempty(i, counter, table)
+				fmt.Println(counter, "low counter")
+				for j := 0; j <= num1; j++ {
 
 					table[i-j-counter] = strings.ToLower(table[i-j-counter])
 					table[i] = ""
@@ -226,27 +241,19 @@ func withNumber(table []string) []string {
 					if i+1 < len(table) {
 						table[i+1] = ""
 					}
-					fmt.Println(table)
-					fmt.Println(len(table))
+
 				}
-				fmt.Println(counter)
 			}
-			if string(table[i]) == "(up,"  &&  strings.HasSuffix(table[i+1],")") {
+			if string(table[i]) == "(up," && strings.HasSuffix(table[i+1], ")") {
 				num1 := 0
 				num1 = MyAtoi(string(table[i+1]))
-				if count-1 < num1 {
-					num1 = count - 1
+				if count < num1 {
+					num1 = count
 				}
 				counter := 0
+				counter = ignoreempty(i, counter, table)
 
-				for l := i - 1; l >= 0; l-- {
-					if table[l] == "" {
-						counter++
-					} else {
-						break
-					}
-				}
-				for j := 1; j <= num1; j++ {
+				for j := 0; j <= num1; j++ {
 
 					table[i-j-counter] = strings.ToUpper(table[i-j-counter])
 					table[i] = ""
@@ -256,46 +263,49 @@ func withNumber(table []string) []string {
 					if i+1 < len(table) {
 						table[i+1] = ""
 					}
-					fmt.Println(table)
 				}
 			}
-			if string(table[i]) == "(cap,"  &&  strings.HasSuffix(table[i+1],")") {
+			if string(table[i]) == "(cap," && strings.HasSuffix(table[i+1], ")") {
 				num1 = MyAtoi(string(table[i+1]))
-				if count-1 < num1 {
-					num1 = count - 1
+
+				if count < num1 {
+					num1 = count
 				}
 
 				counter := 0
+				counter = ignoreempty(i, counter, table)
 
-				for l := i - 1; l >= 0; l-- {
-					if table[l] == "" {
-						counter++
-					} else {
-						break
-					}
-				}
-				for j := 1; j <= num1; j++ {
+				for j := 0; j <= num1; j++ {
+
 					word := table[i-j-counter]
+					if table[i-j-counter] != "" {
 
-					runes := []rune(word)
-					runes[0] = unicode.ToUpper(runes[0])
-					for i := 1; i < len(runes); i++ {
-						runes[i] = unicode.ToLower(runes[i])
-					}
-					table[i-j-counter] = string(runes)
-					table[i] = ""
-					if i < len(table) {
+						runes := []rune(word)
+						runes[0] = unicode.ToUpper(runes[0])
+						for i := 1; i < len(runes); i++ {
+							runes[i] = unicode.ToLower(runes[i])
+						}
+						table[i-j-counter] = string(runes)
 						table[i] = ""
-					}
-					if i+1 < len(table) {
-						table[i+1] = ""
+						if i < len(table) {
+							table[i] = ""
+						}
+						if i+1 < len(table) {
+							table[i+1] = ""
+						}
 					}
 				}
 			}
 		}
 	}
-
-	return table
+	fmt.Println(table)
+	var result []string
+	for i := 0; i < len(table); i++ {
+		if table[i] != "" {
+			result = append(result, table[i])
+		}
+	}
+	return result
 }
 
 func findPunctuationIndex(word string) int {
@@ -311,52 +321,57 @@ func findPunctuationIndex(word string) int {
 
 func punctuations(table []string) []string {
 	var result []string
-	corrWord := ""
-
+	var corrWord string
 	for i := 0; i < len(table); i++ {
-		if string(table[i]) == "," {
-			continue
-		}
-word:=""
-	for j := 0; j < len(table[i]); j++ {
-		if  table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
-		word += string(table[i][j])
-		}
-	}
-		if i >= 0 {
+		if i > 0 && (table[i] == "," || table[i] == "." || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";") {
+			table[i-1] = table[i-1] + table[i]
+			table[i] = ""
+		} else if i > 0 && (strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";")) {
+			count := 0
+			for j := 0; j < len(table[i]); j++ {
+				if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
+					count++
+				}
+			}
+			if count == 1 {
+				table[i-1] = table[i-1] + string(table[i][0])
+				table[i] = table[i][1:]
+			} else {
+				table[i-1] = table[i-1] + string(table[i][0:count])
+				table[i] = table[i][count:]
+			}
+		} else if strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") {
+			count := 0
+			for j := 0; j < len(table[i]); j++ {
+				if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
+					count++
+				}
+			}
+			if count == 1 {
 
-			if strings.Contains(table[i], ",") || strings.Contains(table[i], ".") || strings.Contains(table[i], "!") || strings.Contains(table[i], "?") || strings.Contains(table[i], ":") || strings.Contains(table[i], ";") {
 				index := findPunctuationIndex(table[i])
-				fmt.Println(corrWord)
+				corrWord := ""
 				for k := 0; k < len(table[i]); k++ {
 					corrWord += string(table[i][k])
 					if k == index {
 						corrWord += " "
 					}
 				}
-				table[i] = corrWord
-			} else if table[i] == "," || table[i] == "." || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";" {
-
-				table[i-1] = table[i-1] + table[i]
-				table[i] = ""
-			} else if strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") {
-				count := 0
-				for j := 0; j < len(table[i]); j++ {
-					if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
-						count++
-					}
-				}
-				// fmt.Println(count)
-				if count == 1 {
-					table[i-1] = table[i-1] + string(table[i][0])
-					table[i] = table[i][1:]
-
-				} else {
-					table[i-1] = table[i-1] + string(table[i][0:count])
-					table[i] = table[i][count:]
-				}
-
+				table[i] = strings.TrimSpace(corrWord)
+			} else {
+				table[i] = table[i][:count-1] + " " + table[i][count-1:]
 			}
+		}else if  i > 0 && i < len(table)-1 &&  strings.Contains(table[i], ",") || strings.Contains(table[i], ".") || strings.Contains(table[i], "!") || strings.Contains(table[i], "?") || strings.Contains(table[i], ":") || strings.Contains(table[i], ";") {
+			index := findPunctuationIndex(table[i])
+
+			fmt.Println(index)
+			for k := 0; k < len(table[i]); k++ {
+				corrWord += string(table[i][k])
+				if k == index {
+					corrWord += " "
+				}
+			}
+			table[i]  = corrWord
 		}
 	}
 	for i := 0; i < len(table); i++ {
@@ -364,7 +379,6 @@ word:=""
 			result = append(result, table[i])
 		}
 	}
-
 	return result
 }
 
@@ -524,11 +538,13 @@ func addToTable() []string {
 }
 
 func main() {
+	// fmt.Println(MyAtoi("10)"))
+
 	if len(os.Args) != 3 {
 		fmt.Println("bro you should to write just the sample, result file names   ")
 	} else {
 		if !strings.HasSuffix(os.Args[2], ".txt") {
-			fmt.Println(" Nice try ('_') ")
+			fmt.Println(" Nice try bro (^_-) ")
 		} else {
 			ProcessAll()
 		}
