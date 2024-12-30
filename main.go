@@ -321,12 +321,23 @@ func findPunctuationIndex(word string) int {
 
 func punctuations(table []string) []string {
 	var result []string
-	var corrWord string
+	//var corrWord string
 	for i := 0; i < len(table); i++ {
+		/* // if  i have just one punct in  table[i]
 		if i > 0 && (table[i] == "," || table[i] == "." || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";") {
 			table[i-1] = table[i-1] + table[i]
 			table[i] = ""
-		} else if i > 0 && (strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";")) {
+
+
+
+
+
+
+
+			// if it starts with the punc
+
+			//!   one by one 
+		}else if i > 0 && (strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";")) {
 			count := 0
 			for j := 0; j < len(table[i]); j++ {
 				if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
@@ -340,40 +351,97 @@ func punctuations(table []string) []string {
 				table[i-1] = table[i-1] + string(table[i][0:count])
 				table[i] = table[i][count:]
 			}
-		} else if strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") {
+		}else if i == 0  && (strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";")) {
+word:=""
+
 			count := 0
 			for j := 0; j < len(table[i]); j++ {
 				if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
 					count++
 				}
 			}
+			 for j := 0; j < len(table[i]); j++ {
+				word+=string(table[i][j]) 
+				if j == count-1 {
+					word+=" "
+				}
+			 }
+			 table[i] = word
+
+		}else if strings.Contains(table[i][1:len(table[i])-2],",") {
+			fmt.Println("nkd")
+word:=""
+			count := 0
+			for j := 0; j < len(table[i]); j++ {
+				if table[i][j] == ',' {
+					count++
+				}
+			}
 			if count == 1 {
-
 				index := findPunctuationIndex(table[i])
-				corrWord := ""
-				for k := 0; k < len(table[i]); k++ {
-					corrWord += string(table[i][k])
-					if k == index {
-						corrWord += " "
-					}
-				}
-				table[i] = strings.TrimSpace(corrWord)
-			} else {
-				table[i] = table[i][:count-1] + " " + table[i][count-1:]
-			}
-		}else if  i > 0 && i < len(table)-1 &&  strings.Contains(table[i], ",") || strings.Contains(table[i], ".") || strings.Contains(table[i], "!") || strings.Contains(table[i], "?") || strings.Contains(table[i], ":") || strings.Contains(table[i], ";") {
-			index := findPunctuationIndex(table[i])
 
-			fmt.Println(index)
-			for k := 0; k < len(table[i]); k++ {
-				corrWord += string(table[i][k])
-				if k == index {
-					corrWord += " "
-				}
+				for j := 0; j < len(table[i]); j++ {
+					word+=string(table[i][j]) 
+					if j == index {
+						word+=" "
+					}
+				 }
+				 table[i] =string(table[i][0]) +  word + string(table[i][len(table[i])-1])
+	
 			}
-			table[i]  = corrWord
+			
 		}
+
+
+ */
+ if  table[i] == "." || table[i] == "," || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";"{
+	if i > 0 {
+		for j := 0; j < i; j++ {
+			if table[i-1-j] != "" {
+				table[i-1-j] += table[i]
+				table[i] = ""
+			}
+		}
+	}}else if  strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";"){
+	if len(table[i]) > 0 && (table[i][0] == '.' || table[i][0] == ',' || table[i][0] == '!' || table[i][0] == '?' || table[i][0] == ':' || table[i][0] == ';') {
+		count := 0
+		for j := 0; j < len(table[i]) && (table[i][j] == '.' || table[i][j] == ',' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';'); j++ {
+			count++
+		}
+		fmt.Printf("%q", table)
+		if i > 0 && table[i-1] != "" {
+			table[i-1] += table[i][:count]
+			table[i] = table[i][count:]
+			i--
+		} else if i == 0 {
+			count := 0
+
+			for j := 0; j < len(table[i]) && (table[i][j] == '.' || table[i][j] == ',' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';'); j++ {
+				count++
+			}
+
+			table = append([]string{table[i][:count], table[i][count:]}, table[i+1:]...)
+
+		}
+
+	}}else if  strings.ContainsAny(table[i], ".,!?;:"){
+	index := strings.IndexAny(table[i], ".,!?;:")
+	if index > 0 && index < len(table[i])-1 {
+		punctuation := table[i][index:]
+		remaining := table[i][:index]
+
+		table[i] = remaining
+		table = append(table[:i+1], append([]string{punctuation}, table[i+1:]...)...)
 	}
+}
+}
+
+
+		
+		
+		
+
+	
 	for i := 0; i < len(table); i++ {
 		if table[i] != "" {
 			result = append(result, table[i])
