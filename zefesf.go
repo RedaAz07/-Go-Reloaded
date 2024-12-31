@@ -31,11 +31,12 @@ func ReadFile(name string) string {
 // Process all functrions
 func ProcessAll() {
 	table := addToTable()
-	
+	table = Proccedflag(table)
+
 	table = withNumber(table)
 	table = BinaryToDecimal(table)
 	table = HexadecimalToDecimal(table)
-	table = Capitalized(table)
+	// table = Capitalized(table)
 	table = Lower(table)
 	table = Upper(table)
 	table = punctuations(table)
@@ -46,14 +47,26 @@ func ProcessAll() {
 	AddToFile(data, os.Args[2])
 }
 
+func Proccedflag(table []string) []string {
+	for i := 0; i < len(table); i++ {
+		switch {
+		case table[i] == "(cap)":
+			table[i-1] = Capitalized(table[i-1])
+			table[i-1]=""
+		}
+	}
+
+	return table
+}
+
 func HexadecimalToDecimal(table []string) []string {
 	for i := 0; i < len(table); i++ {
 		if i > 0 {
 			if table[i] == "(hex)" {
-				
+
 				counter := 0
 
-			counter = piscine.Ignoreempty(i, counter, table)
+				counter = piscine.Ignoreempty(i, counter, table)
 
 				decimalNumber, err := strconv.ParseInt(table[i-1-counter], 16, 0)
 				if err != nil {
@@ -76,8 +89,7 @@ func BinaryToDecimal(table []string) []string {
 
 				counter := 0
 
-			counter = piscine.Ignoreempty(i, counter, table)
-
+				counter = piscine.Ignoreempty(i, counter, table)
 
 				decimalNumber, err := strconv.ParseInt(table[i-1-counter], 2, 0)
 				if err != nil {
@@ -92,27 +104,19 @@ func BinaryToDecimal(table []string) []string {
 	return result
 }
 
-func Capitalized(table []string) []string {
-	for index, value := range table {
-		if index > 0 && value == "(cap)" {
-
-			counter := 0
-
-			counter = piscine.Ignoreempty(index, counter, table)
-
-			word := table[index-1-counter]
-			// Capitalize the first letter
-			runes := []rune(word)
-			runes[0] = unicode.ToUpper(runes[0])
-			for i := 1; i < len(runes); i++ {
-				runes[i] = unicode.ToLower(runes[i])
-			}
-			table[index-1-counter] = string(runes)
-
+func Capitalized(table string) string {
+	str:=""
+	pass:=true
+	for _, char := range table {
+		
+		if unicode.IsLetter(char) && pass{
+			str+=strings.ToUpper(string(char))
+			pass=false
+		}else{
+			str+=strings.ToLower(string(char))
 		}
 	}
-	result := piscine.DeleteCases("(cap)", table)
-	return result
+	return str
 }
 
 func Upper(table []string) []string {
@@ -227,11 +231,11 @@ func withNumber(table []string) []string {
 					}
 				}
 			}
-		}else if i < len(table)-1{
+		} /* else if i < len(table)-1{
 			table[i] = ""
 			table[i+1] = ""
 
-		}
+		} */
 	}
 	fmt.Println(table)
 	var result []string
