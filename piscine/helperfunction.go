@@ -60,3 +60,22 @@ func DeleteCases(cas string, table []string) []string {
 	}
 	return result
 }
+
+
+func AddToTable(txt string) []string {
+	word := ""
+	var table []string
+	for _, i := range txt {
+		if i != '\n' {
+			word += string(i)
+		} else {
+			if word != "" {
+				table = append(table, word)
+				word = ""
+			}
+		}
+	}
+		table = append(table, word)
+	
+	return table
+}
