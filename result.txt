@@ -1,10 +1,20 @@
-ERGREG Low
-greg
-reg
-rs
-gregrsg
-rsgfrs
-gfsr
-fgres
-gfsrreg
-reggrtg
+1E (hex, 3) files were added to 2 folders
+This text has no Modifications
+LET'S TEST multiple spaces
+How about (low, 0) zero or (up, -1) negative numbers?
+Nested modifications: (up, 2 (low, 1)) should this work?
+Incomplete modifiers: (up (
+Mixed case HEX: 6719 should be converted
+An untold story about an hour and an herb
+Punctuation madness: What??!?...,.;: 'test' ' s
+That's not how'quotes'work but'let's'see
+(up, 9999) will this try to modify more words than exist?
+178956970 very long binary
+10000000000000000 very long hex
+an e i o u h An E I O U H testing 'a' vs 'an'
+'' empty quotes
+'multiple words in quotes'
+at the end OF A SENTENCE. at the start of a sentence.
+This is SO EXCITING!
+Multiple. Sentences. With. Weird. Spacing.
+This text has (imaginary) modifiers (hello) (WORLD)

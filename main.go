@@ -12,6 +12,14 @@ import (
 
 
 func main() {
+
+
+
+fmt.Println(piscine.SpliteQuot([]string{"'''red'a'","annis"}))
+
+
+
+
 	if len(os.Args) != 3 {
 		fmt.Println("  go run . (sample0.txt) (result.txt) ")
 		return
@@ -54,7 +62,6 @@ for i := 0; i < len(lines); i++ {
 			last = append(last, word)
 		}
 	}
-	fmt.Println([]byte(strings.Join(lastResult, " ")))
 
 	last = piscine.Filter(last)
 	for _, word := range last {
