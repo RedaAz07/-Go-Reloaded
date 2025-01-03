@@ -46,14 +46,43 @@ func main() {
 	
 			word = piscine.Flags(word)
 	
+
+
+
+
+
+
 			filtering = []string{}
 			for _, w := range word {
 				if w != "" {
 					filtering = append(filtering, w)
 				}
 			}
+
+
+
+			current := strings.Join(filtering, " ") 
+			if current == previous{
+				break
+			}
+		
+			word = filtering
+	
+		}
+
+
+
+
+
+
+
+
 			filtering = piscine.SplitePunc(filtering)
 	
+
+
+
+
 			last = []string{}
 			for _, w := range filtering {
 				if w != "" {
@@ -70,16 +99,9 @@ func main() {
 				}
 			}
 	
-			current := strings.Join(lastResult, " ") 
-			fmt.Println(current)
-				if current == previous{
-					break
-				}
-			
+		
 
-			word = lastResult
-	
-		}
+		
 	
 		table = append(table, strings.Join(lastResult, " "))
 	}

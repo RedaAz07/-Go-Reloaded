@@ -67,18 +67,38 @@ func SpliteQuot(str []string) []string {
 	currentWord := ""
 
 	for _, word := range str {
-		for _, char := range word { // Iterate using runes
+		for i, char := range word {
 			if char == '\'' {
-				if currentWord != "" {
-					result = append(result, currentWord)
-					currentWord = ""
+				// Handle consecutive quotes by splitting them
+				if i < len(word)-1 && word[i+1] == '\'' {
+					if currentWord != "" {
+						result = append(result, currentWord)
+						currentWord = ""
+					}
+					// Append each single quote as a separate token
+					for i < len(word) && word[i] == '\'' {
+						result = append(result, "'")
+						i++
+					}
+					i-- // Adjust for loop increment
+				} else if i > 0 && i < len(word)-1 {
+					// Quote in the middle of a word
+					currentWord += string(char)
+				} else {
+					// Single quote at start or end of word
+					if currentWord != "" {
+						result = append(result, currentWord)
+						currentWord = ""
+					}
+					result = append(result, string(char))
 				}
-				result = append(result, string(char))
 			} else {
+				// Append normal characters to currentWord
 				currentWord += string(char)
 			}
 		}
 
+		// Append the remaining word after finishing the current word
 		if currentWord != "" {
 			result = append(result, currentWord)
 			currentWord = ""
@@ -90,72 +110,68 @@ func SpliteQuot(str []string) []string {
 
 
 func Filter(str []string) []string {
-	str = SpliteQuot(str)
+	table := SpliteQuot(str)
 	inside := false
 
-	for i := 0; i < len(str); i++ {
+	for i := 0; i < len(table); i++ {
 		correc := true
 
 		switch {
 
-		case str[i] == "'":
+		case table[i] == "'":
 
-			 if !CheckQuot(str, i) {
-				str[i+1]	= "'" + str[i+1]
-				str[i]	=""
-			}
 			x := 0
 			for k := i - 1; k >= 0; k-- {
-				if str[k] == "" {
+				if table[k] == "" {
 					x++
 				} else {
 					break
 				}
 			}
 
-			if i+1 < len(str) && CheckQuot(str, i) && !inside {
-				str[i] = "'" + str[i+1]
-				if str[i+1] == "'" {
+			if i+1 < len(table) && CheckQuot(table, i) && !inside {
+				table[i] = "'" + table[i+1]
+				if table[i+1] == "'" {
 					correc = false
 				} else {
 					inside = true
 				}
-				str[i+1] = ""
+				table[i+1] = ""
 			} else if i-x > 0 && inside && correc {
-				str[i-x-1] += "'"
-				str[i] = ""
+				table[i-x-1] += "'"
+				table[i] = ""
 				inside = false
 				break
 
 			}
-		case str[i] == "." || str[i] == "," || str[i] == "!" || str[i] == "?" || str[i] == ":" || str[i] == ";":
+		case table[i] == "." || table[i] == "," || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";":
 			if i > 0 {
 				for j := 0; j < i; j++ {
-					if str[i-1-j] != "" {
-						str[i-1-j] += str[i]
-						str[i] = ""
+					if table[i-1-j] != "" {
+						table[i-1-j] += table[i]
+						table[i] = ""
 					}
 				}
 			}
-		case strings.HasPrefix(str[i], ".") || strings.HasPrefix(str[i], ",") || strings.HasPrefix(str[i], "!") || strings.HasPrefix(str[i], "?") || strings.HasPrefix(str[i], ":") || strings.HasPrefix(str[i], ";"):
-			if len(str[i]) > 0 && (str[i][0] == '.' || str[i][0] == ',' || str[i][0] == '!' || str[i][0] == '?' || str[i][0] == ':' || str[i][0] == ';') {
+		case strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";"):
+			if len(table[i]) > 0 && (table[i][0] == '.' || table[i][0] == ',' || table[i][0] == '!' || table[i][0] == '?' || table[i][0] == ':' || table[i][0] == ';') {
 				count := 0
-				for j := 0; j < len(str[i]) && (str[i][j] == '.' || str[i][j] == ',' || str[i][j] == '!' || str[i][j] == '?' || str[i][j] == ':' || str[i][j] == ';'); j++ {
+				for j := 0; j < len(table[i]) && (table[i][j] == '.' || table[i][j] == ',' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';'); j++ {
 					count++
 				}
 
-				if i > 0 && str[i-1] != "" {
-					str[i-1] += str[i][:count]
-					str[i] = str[i][count:]
+				if i > 0 && table[i-1] != "" {
+					table[i-1] += table[i][:count]
+					table[i] = table[i][count:]
 				}
 			}
 
-		case str[i] == "a" || str[i] == "A":
-			letter, found := Nextchar(str, i)
-			if found && i+1 < len(str) && (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'h') || (letter == 'A' || letter == 'E' || letter == 'I' || letter == 'O' || letter == 'U' || letter == 'H') {
-				str[i] += "n"
+		case table[i] == "a" || table[i] == "A":
+			letter, found := Nextchar(table, i)
+			if found && i+1 < len(table) && (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'h') || (letter == 'A' || letter == 'E' || letter == 'I' || letter == 'O' || letter == 'U' || letter == 'H') {
+				table[i] += "n"
 			} 
 		}
 	}
-	return str
+	return table
 }
