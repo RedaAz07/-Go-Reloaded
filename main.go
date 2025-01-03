@@ -10,12 +10,7 @@ import (
 
 
 
-
 func main() {
-
-
-
-fmt.Println(piscine.SpliteQuot([]string{"'''red'a'","annis"}))
 
 
 
@@ -26,7 +21,7 @@ fmt.Println(piscine.SpliteQuot([]string{"'''red'a'","annis"}))
 	}
 
 	if !strings.HasSuffix(os.Args[2], ".txt") {
-		fmt.Print("Nice try  bro ")
+		fmt.Println("Nice try  bro ")
 		return
 	}
 
@@ -36,45 +31,61 @@ fmt.Println(piscine.SpliteQuot([]string{"'''red'a'","annis"}))
 		return
 	}
 
-lines := strings.Split(string(textFile), "\n")
-
-var table[]string
-for i := 0; i < len(lines); i++ {
+	lines := strings.Split(string(textFile), "\n")
+	var table []string
+	for _, line := range lines {
+		word := strings.Fields(line)
 	
+		lastResult := []string{}
+		filtering := []string{}
+		last := []string{}
+	
+		for { 
+			previous := strings.Join(word, " ") 
+		fmt.Println(previous ,"<======")
+	
+			word = piscine.Flags(word)
+	
+			filtering = []string{}
+			for _, w := range word {
+				if w != "" {
+					filtering = append(filtering, w)
+				}
+			}
+			filtering = piscine.SplitePunc(filtering)
+	
+			last = []string{}
+			for _, w := range filtering {
+				if w != "" {
+					last = append(last, w)
+				}
+			}
+	
+			last = piscine.Filter(last)
+	
+			lastResult = []string{}
+			for _, w := range last {
+				if w != "" {
+					lastResult = append(lastResult, w)
+				}
+			}
+	
+			current := strings.Join(lastResult, " ") 
+			fmt.Println(current)
+				if current == previous{
+					break
+				}
+			
 
-	worlds := strings.Fields(lines[i])
-
-
-
-	lastResult := []string{}
-	filteredWorlds := []string{}
-	last := []string{}
-	worlds=piscine.Flags(worlds)
-	for _, word := range worlds {
-		if word != "" {
-			filteredWorlds = append(filteredWorlds, word)
+			word = lastResult
+	
 		}
+	
+		table = append(table, strings.Join(lastResult, " "))
 	}
-
-	filteredWorlds = piscine.SplitePunc(filteredWorlds)
-	for _, word := range filteredWorlds {
-		if word != "" {
-			last = append(last, word)
-		}
-	}
-
-	last = piscine.Filter(last)
-	for _, word := range last {
-		if word != "" {
-			lastResult = append(lastResult, word)
-		}
-	}
-	table = append(table,strings.Join(lastResult," "))
-
-}
+	
 	err = os.WriteFile(os.Args[2], []byte(strings.Join(table, "\n")), 0o644)
 	if err != nil {
 		fmt.Printf("Error writing to output file: %v\n", err)
 	}
-	
 }

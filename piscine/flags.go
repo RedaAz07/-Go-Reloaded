@@ -34,10 +34,10 @@ func low(world string) string {
 	return strings.ToLower(world)
 }
 
-func cap(world string) string {
+func cap(word string) string {
 	x := ""
 	firstRune := true
-	for _, chr := range world {
+	for _, chr := range word {
 		if unicode.IsLetter(chr) && firstRune {
 			x += strings.ToUpper(string(chr))
 			firstRune = false
@@ -47,6 +47,7 @@ func cap(world string) string {
 	}
 	return x
 }
+
 
 func Iscorrect(nbr string) (int, error) {
 	if len(nbr) > 0 && nbr[len(nbr)-1] == ')' {

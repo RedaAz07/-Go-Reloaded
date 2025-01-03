@@ -63,45 +63,29 @@ func CheckQuot(word []string, index int) bool {
 }
 
 func SpliteQuot(str []string) []string {
-    result := []string{}
-    currentWord := ""
+	result := []string{}
+	currentWord := ""
 
-    for _, word := range str {
-        for i := 0; i < len(word); i++ {
-            char := word[i]
+	for _, word := range str {
+		for _, char := range word { // Iterate using runes
+			if char == '\'' {
+				if currentWord != "" {
+					result = append(result, currentWord)
+					currentWord = ""
+				}
+				result = append(result, string(char))
+			} else {
+				currentWord += string(char)
+			}
+		}
 
-            if char == '\'' {
-                if i < len(word)-1 && word[i+1] == '\'' {
-                    if currentWord != "" {
-                        result = append(result, currentWord)
-                        currentWord = ""
-                    }
-                    for i < len(word) && word[i] == '\'' {
-                        result = append(result, "'")
-                        i++
-                    }
-                    i-- 
-                } else if i > 0 && i < len(word)-1 {
-                    currentWord += string(char)
-                } else {
-                    if currentWord != "" {
-                        result = append(result, currentWord)
-                        currentWord = ""
-                    }
-                    result = append(result, string(char))
-                }
-            } else {
-                currentWord += string(char)
-            }
-        }
+		if currentWord != "" {
+			result = append(result, currentWord)
+			currentWord = ""
+		}
+	}
 
-        if currentWord != "" {
-            result = append(result, currentWord)
-            currentWord = ""
-        }
-    }
-
-    return result
+	return result
 }
 
 
@@ -113,7 +97,13 @@ func Filter(str []string) []string {
 		correc := true
 
 		switch {
+
 		case str[i] == "'":
+
+			 if !CheckQuot(str, i) {
+				str[i+1]	= "'" + str[i+1]
+				str[i]	=""
+			}
 			x := 0
 			for k := i - 1; k >= 0; k-- {
 				if str[k] == "" {
