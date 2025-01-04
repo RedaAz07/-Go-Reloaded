@@ -1,24 +1,39 @@
 package piscine
 
 import (
-	
+	"fmt"
 	"strings"
-	
 )
 
-func Nextchar(slice []string, index int) (rune, bool) {
-	if index < 0 || index >= len(slice)-1 {
-		return 0, false
-	}
+func Nextchar(table []string, index int) (rune, bool) {
+	if index < 0 || index >= len(table)-1 {
+        return 0, false
+    }
+    for i := index + 1; i < len(table); i++ {
+        if table[i] != "" {
+            return rune(table[i][0]), true
+        }
+    }
+    return 0, false
+ 
+}
 
-	for i := index + 1; i < len(slice); i++ {
-		if slice[i] != "" {
-			return rune(slice[i][0]), true
-		}
-	}
 
-	return 0, false
-} 
+func Avoil( table[]string) []string{
+for i := 0; i < len(table); i++ {
+	
+
+  if table[i] == "'a" || table[i] == "'A" || table[i] == "a" || table[i] == "A"{
+
+ 
+	letter, found := Nextchar(table, i)
+	if found && i+1 < len(table) && strings.ContainsRune("aeiouhAEIOUH", letter) {
+		table[i] += "n"
+	} 
+}
+}
+return table 
+}
 
 
 func SplitePunc(str []string) []string {
@@ -67,25 +82,23 @@ func SpliteQuot(str []string) []string {
 	currentWord := ""
 
 	for _, word := range str {
-		for i, char := range word {
+		runes := []rune(word) 
+		for i := 0; i < len(runes); i++ {
+			char := runes[i]
 			if char == '\'' {
-				// Handle consecutive quotes by splitting them
-				if i < len(word)-1 && word[i+1] == '\'' {
+				if i < len(runes)-1 && runes[i+1] == '\'' {
 					if currentWord != "" {
 						result = append(result, currentWord)
 						currentWord = ""
 					}
-					// Append each single quote as a separate token
-					for i < len(word) && word[i] == '\'' {
+					for i < len(runes) && runes[i] == '\'' {
 						result = append(result, "'")
 						i++
 					}
-					i-- // Adjust for loop increment
-				} else if i > 0 && i < len(word)-1 {
-					// Quote in the middle of a word
+					i-- // Adjust index after inner loop
+				} else if i > 0 && i < len(runes)-1 {
 					currentWord += string(char)
 				} else {
-					// Single quote at start or end of word
 					if currentWord != "" {
 						result = append(result, currentWord)
 						currentWord = ""
@@ -93,12 +106,9 @@ func SpliteQuot(str []string) []string {
 					result = append(result, string(char))
 				}
 			} else {
-				// Append normal characters to currentWord
 				currentWord += string(char)
 			}
 		}
-
-		// Append the remaining word after finishing the current word
 		if currentWord != "" {
 			result = append(result, currentWord)
 			currentWord = ""
@@ -107,6 +117,11 @@ func SpliteQuot(str []string) []string {
 
 	return result
 }
+
+
+
+
+
 
 
 func Filter(str []string) []string {
@@ -144,6 +159,8 @@ func Filter(str []string) []string {
 				break
 
 			}
+			fmt.Println(table)
+
 		case table[i] == "." || table[i] == "," || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";":
 			if i > 0 {
 				for j := 0; j < i; j++ {
@@ -166,12 +183,10 @@ func Filter(str []string) []string {
 				}
 			}
 
-		case table[i] == "a" || table[i] == "A":
-			letter, found := Nextchar(table, i)
-			if found && i+1 < len(table) && (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'h') || (letter == 'A' || letter == 'E' || letter == 'I' || letter == 'O' || letter == 'U' || letter == 'H') {
-				table[i] += "n"
-			} 
 		}
 	}
-	return table
+
+
+	table = Avoil(table)
+  	return table
 }
