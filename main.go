@@ -69,6 +69,26 @@ func main() {
 			}
 		}
 
+		for {
+			previous := strings.Join(lastResult, " ")
+			lastResult = piscine.Flags(lastResult)
+			filtering = []string{}
+			for _, w := range lastResult {
+				if w != "" {
+					filtering = append(filtering, w)
+				}
+			}
+			current := strings.Join(filtering, " ")
+			if current == previous {
+				break
+			}
+			lastResult = filtering
+
+		}
+
+
+
+
 		table = append(table, strings.Join(lastResult, " "))
 	}
 
