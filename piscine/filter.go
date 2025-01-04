@@ -1,7 +1,6 @@
 package piscine
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -159,7 +158,6 @@ func Filter(str []string) []string {
 				break
 
 			}
-			fmt.Println(table)
 
 		case table[i] == "." || table[i] == "," || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";":
 			if i > 0 {
